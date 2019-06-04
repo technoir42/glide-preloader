@@ -1,0 +1,76 @@
+plugins {
+    id "com.android.library"
+    id "com.github.technoir42.aar-publish" version "1.0.2"
+    id "com.jfrog.bintray" version "1.8.4"
+    id "maven-publish"
+}
+
+group = "com.github.technoir42"
+version = "0.1"
+
+android {
+    compileSdkVersion buildConfig.compileSdkVersion
+
+    defaultConfig {
+        minSdkVersion buildConfig.minSdkVersion
+        targetSdkVersion buildConfig.targetSdkVersion
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    testOptions {
+        unitTests {
+            all {
+                useJUnitPlatform()
+            }
+        }
+    }
+
+    libraryVariants.all { variant ->
+        variant.generateBuildConfigProvider.configure { enabled = false }
+    }
+}
+
+dependencies {
+    implementation "androidx.annotation:annotation:$versions.androidx.annotation"
+    api "androidx.lifecycle:lifecycle-common:$versions.androidx.lifecycle"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$versions.androidx.lifecycle"
+    api "androidx.recyclerview:recyclerview:$versions.androidx.recyclerview"
+    api "com.github.bumptech.glide:glide:$versions.glide"
+
+    compileOnly "com.google.android:flexbox:$versions.flexboxlayout"
+    testImplementation "com.google.android:flexbox:$versions.flexboxlayout"
+
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$versions.junit.jupiter"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$versions.junit.jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:$versions.junit.platform"
+    testImplementation "org.mockito:mockito-inline:$versions.mockito"
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.android
+        }
+    }
+}
+
+bintray {
+    user = findProperty("BINTRAY_USER")
+    key = findProperty("BINTRAY_KEY")
+    publish = true
+
+    pkg {
+        repo = "maven"
+        name = "glide-preloader"
+        licenses = ["Apache-2.0"]
+        vcsUrl = "https://github.com/technoir42/glide-preloader.git"
+        version {
+            name = project.version
+        }
+        publications = ["maven"]
+    }
+}
