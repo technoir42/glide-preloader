@@ -22,20 +22,18 @@ dependencies {
 ### Kotlin
 
 ```kotlin
-val callback = object : ListPreloader.Callback {
-    override fun onPreload(position: Int, preloader: ListPreloader) {
-        val item = adapter.getItem(position)
+val callback = ListPreloader.Callback { position, preloader ->
+    val item = adapter.getItem(position)
 
-        // Configure pre-load request similarly to the main request.
-        val preloadRequest = glide.load(item.imageUrl)
-            .circleCrop()
-            .priority(Priority.LOW) // Setting priority to LOW is optional but recommended.
+    // Configure pre-load request similarly to the main request.
+    val preloadRequest = glide.load(item.imageUrl)
+        .circleCrop()
+        .priority(Priority.LOW) // Setting priority to LOW is optional but recommended.
 
-        // Call `preload` passing the request and dimensions of the target.
-        // You can call `preload` multiple times if there are multiple images per item
-        // or you can skip this call entirely if there is nothing to pre-load.
-        preloader.preload(preloadRequest, width, height)
-    }
+    // Call `preload` passing the request and dimensions of the target.
+    // You can call `preload` multiple times if there are multiple images per item
+    // or you can skip this call entirely if there is nothing to pre-load.
+    preloader.preload(preloadRequest, width, height)
 }
 
 ListPreloader(glide, callback, MAX_PRELOAD).attach(recyclerView)
