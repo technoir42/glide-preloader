@@ -102,17 +102,20 @@ public final class ListPreloader {
     /**
      * Notifies that the list was scrolled and starts pre-loading if necessary.
      *
-     * @param firstVisibleItem index of the first visible item.
-     * @param lastVisibleItem  index of the last visible item.
+     * @param firstVisibleItem index of the first visible item or -1 if no items are visible.
+     * @param lastVisibleItem  index of the last visible item or -1 if no items are visible.
      * @param totalItemCount   total number of items in adapter.
      */
     public void onScrolled(int firstVisibleItem, int lastVisibleItem, int totalItemCount) {
-        require(firstVisibleItem >= 0 && firstVisibleItem < totalItemCount, () ->
-                "firstVisibleItem must be in range [0.." + totalItemCount + "), but was " + firstVisibleItem);
-        require(lastVisibleItem >= 0 && lastVisibleItem < totalItemCount, () ->
-                "lastVisibleItem must be in range [0.." + totalItemCount + "), but was " + lastVisibleItem);
-        require(firstVisibleItem <= lastVisibleItem, () ->
-                "firstVisibleItem (" + firstVisibleItem + ") must be less or equal to lastVisibleItem (" + lastVisibleItem + ")");
+        if (firstVisibleItem != -1 && lastVisibleItem != -1) {
+            require(firstVisibleItem >= 0 && firstVisibleItem < totalItemCount, () ->
+                    "firstVisibleItem must be in range [0.." + totalItemCount + ") or -1, but was " + firstVisibleItem);
+            require(lastVisibleItem >= 0 && lastVisibleItem < totalItemCount, () ->
+                    "lastVisibleItem must be in range [0.." + totalItemCount + ") or -1, but was " + lastVisibleItem);
+            require(firstVisibleItem <= lastVisibleItem, () ->
+                    "firstVisibleItem (" + firstVisibleItem + ") must be less or equal to lastVisibleItem (" + lastVisibleItem + ")");
+        }
+        require(totalItemCount >= 0, () -> "totalItemCount must be greater or equal to 0, but was " + totalItemCount);
 
         if (!isEnabled) return;
 

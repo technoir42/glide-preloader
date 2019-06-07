@@ -107,20 +107,23 @@ class ListPreloaderTest {
     @Test
     @DisplayName("onScrolled validates parameters")
     void onScrolled_validation() {
-        assertThrows(IllegalArgumentException.class, () -> preloader.onScrolled(-1, 1, 10),
-                "firstVisibleItem must be in range [0..10), but was -1");
+        Exception e = assertThrows(IllegalArgumentException.class, () -> preloader.onScrolled(-2, 1, 10));
+        assertEquals("firstVisibleItem must be in range [0..10) or -1, but was -2", e.getMessage());
 
-        assertThrows(IllegalArgumentException.class, () -> preloader.onScrolled(10, 1, 10),
-                "firstVisibleItem must be in range [0..10), but was 10");
+        e = assertThrows(IllegalArgumentException.class, () -> preloader.onScrolled(10, 1, 10));
+        assertEquals("firstVisibleItem must be in range [0..10) or -1, but was 10", e.getMessage());
 
-        assertThrows(IllegalArgumentException.class, () -> preloader.onScrolled(0, -1, 10),
-                "lastVisibleItem must be in range [0..10), but was -1");
+        e = assertThrows(IllegalArgumentException.class, () -> preloader.onScrolled(0, -2, 10));
+        assertEquals("lastVisibleItem must be in range [0..10) or -1, but was -2", e.getMessage());
 
-        assertThrows(IllegalArgumentException.class, () -> preloader.onScrolled(0, 10, 10),
-                "lastVisibleItem must be in range [0..10), but was -1");
+        e = assertThrows(IllegalArgumentException.class, () -> preloader.onScrolled(0, 10, 10));
+        assertEquals("lastVisibleItem must be in range [0..10) or -1, but was 10", e.getMessage());
 
-        assertThrows(IllegalArgumentException.class, () -> preloader.onScrolled(1, 0, 10),
-                "firstVisibleItem (1) must be less or equal to lastVisibleItem (0)");
+        e = assertThrows(IllegalArgumentException.class, () -> preloader.onScrolled(1, 0, 10));
+        assertEquals("firstVisibleItem (1) must be less or equal to lastVisibleItem (0)", e.getMessage());
+
+        e = assertThrows(IllegalArgumentException.class, () -> preloader.onScrolled(-1, -1, -1));
+        assertEquals("totalItemCount must be greater or equal to 0, but was -1", e.getMessage());
     }
 
     @Test
@@ -177,6 +180,14 @@ class ListPreloaderTest {
         clearInvocations(callback);
 
         preloader.onScrolled(0, 2, 5);
+
+        verifyZeroInteractions(callback);
+    }
+
+    @Test
+    @DisplayName("onScrolled does nothing no items are visible")
+    void onScrolled_noData() {
+        preloader.onScrolled(-1, -1, 0);
 
         verifyZeroInteractions(callback);
     }
@@ -244,11 +255,11 @@ class ListPreloaderTest {
     void preload_validation() {
         RequestBuilder<?> requestBuilder = mock(RequestBuilder.class);
 
-        assertThrows(IllegalArgumentException.class, () -> preloader.preload(requestBuilder, 0, 100),
-                "width must be greater than 0, but was 0");
+        Exception e = assertThrows(IllegalArgumentException.class, () -> preloader.preload(requestBuilder, 0, 100));
+        assertEquals("width must be greater than 0, but was 0", e.getMessage());
 
-        assertThrows(IllegalArgumentException.class, () -> preloader.preload(requestBuilder, 100, 0),
-                "height must be greater than 0, but was 0");
+        e = assertThrows(IllegalArgumentException.class, () -> preloader.preload(requestBuilder, 100, 0));
+        assertEquals("height must be greater than 0, but was 0", e.getMessage());
     }
 
     @Test

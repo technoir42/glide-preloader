@@ -28,8 +28,8 @@ class DefaultVisiblePositionFinderTest {
         void findFirstVisibleItemPosition() {
             RecyclerView.LayoutManager layoutManager = new MockLayoutManager();
 
-            assertThrows(IllegalStateException.class, () -> visiblePositionFinder.findFirstVisibleItemPosition(layoutManager),
-                    "Unsupported LayoutManager: com.github.technoir42.glide.preloader.MockLayoutManager");
+            Exception e = assertThrows(IllegalStateException.class, () -> visiblePositionFinder.findFirstVisibleItemPosition(layoutManager));
+            assertEquals("Unsupported LayoutManager: com.github.technoir42.glide.preloader.MockLayoutManager", e.getMessage());
         }
 
         @Test
@@ -37,8 +37,8 @@ class DefaultVisiblePositionFinderTest {
         void findLastVisibleItemPosition() {
             RecyclerView.LayoutManager layoutManager = new MockLayoutManager();
 
-            assertThrows(IllegalStateException.class, () -> visiblePositionFinder.findLastVisibleItemPosition(layoutManager),
-                    "Unsupported LayoutManager: com.github.technoir42.glide.preloader.MockLayoutManager");
+            Exception e = assertThrows(IllegalStateException.class, () -> visiblePositionFinder.findLastVisibleItemPosition(layoutManager));
+            assertEquals("Unsupported LayoutManager: com.github.technoir42.glide.preloader.MockLayoutManager", e.getMessage());
         }
     }
 
@@ -125,11 +125,11 @@ class DefaultVisiblePositionFinderTest {
             assertEquals(42, result);
         }
     }
+}
 
-    static class MockLayoutManager extends RecyclerView.LayoutManager {
-        @Override
-        public RecyclerView.LayoutParams generateDefaultLayoutParams() {
-            return null;
-        }
+class MockLayoutManager extends RecyclerView.LayoutManager {
+    @Override
+    public RecyclerView.LayoutParams generateDefaultLayoutParams() {
+        return null;
     }
 }

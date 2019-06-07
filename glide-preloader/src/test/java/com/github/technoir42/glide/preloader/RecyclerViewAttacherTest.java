@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -51,6 +52,7 @@ class RecyclerViewAttacherTest {
     @Test
     @DisplayName("onScrolled throws IllegalStateException it not attached")
     void onScrolled_notAttached() {
-        assertThrows(IllegalStateException.class, () -> attacher.onScrolled(recyclerView, 0, 100), "Not attached");
+        Exception e = assertThrows(IllegalStateException.class, () -> attacher.onScrolled(recyclerView, 0, 100));
+        assertEquals("Not attached", e.getMessage());
     }
 }
